@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Docker basics | PGS Software</title>
+		<meta name="description" content="Docker basic configuration for Symfony3">
+		<meta name="author" content="Dawid Grochowski">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/pgs.css">
+	</head>
+
+	<body class="light-code">
+		<div class="reveal">
+
+			<div class="slides">
+
+				<section data-state="logo">
+					<h2>Docker skeleton</h2>
+					<h4>for Symfony 3</h4>
+					<p>
+						<small>Created by <a href="mailto:kontakt@dawidgrochowski.pl">Dawid Grochowski</a></small>
+					</p>
+				</section>
+
+                <section>
+                    <h2>Agenda</h2>
+                    <p style="text-align:left;">
+                        1. Preparing Docker-based environment for Symfony3<br>
+                        2. Refactoring received code
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Assumptions</h2>
+                    <ul>
+                        <li>PHP 7.1</li>
+                        <li>Nginx</li>
+                        <li>Mysql</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Directory tree</h2>
+                    <p style="padding-left:30%;text-align: left;font-size:1em;line-height:1em;">
+                        docker_skeleton/<br>
+                        │<br>
+                        ├ <b>docker-compose.yml</b><br>
+                        │<br>
+                        └ symfony/<br>
+                        &nbsp; │<br>
+                        &nbsp; └ web/<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;└ <b>app.php</b> -> <i><a href="https://goo.gl/Yr55L2">goo.gl/Yr55L2</a></i><br>
+                    </p>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><a href="https://hub.docker.com">hub.docker.com</a></p>
+                    <p><img src="images/docker-hub.png" /></p>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v1.0</strong></p>
+                    <p><i><a href="https://goo.gl/x4RtcG">goo.gl/x4RtcG</a></i></p>
+                    <pre><code data-trim contenteditable>
+version: '2'
+services:
+    php:
+        image: php:7.1-fpm
+        volumes:
+            - ./symfony:/var/www/symfony
+...
+					</code></pre>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v1.0</strong></p>
+                    <p><i><a href="https://goo.gl/x4RtcG">goo.gl/x4RtcG</a></i></p>
+                    <pre><code data-trim contenteditable>
+...
+    nginx:
+        container_name: sf_nginx
+        image: nginx:stable
+        ports:
+            - "80:80"
+        links:
+            - php
+        volumes_from:
+            - php
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                </section>
+
+                <section>
+                    <p><strong>default.conf - v1.1</strong></p>
+                    <p><i><a href="https://goo.gl/RwmBr9">goo.gl/RwmBr9</a></i></p>
+                    <p style="padding-left:30%;text-align: left;font-size:1em;line-height:1em;">
+                        docker_skeleton/<br>
+                        │<br>
+                        ├ <b>docker-compose.yml</b><br>
+                        │<br>
+                        ├ <b>default.conf</b><br>
+                        │<br>
+                        └ symfony/<br>
+                    </p>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v1.1</strong></p>
+                    <p><i><a href="https://goo.gl/RwmBr9">goo.gl/RwmBr9</a></i></p>
+                    <pre><code data-trim contenteditable>
+...
+        volumes:
+            - ./default.conf:/etc/nginx/conf.d/default.conf
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                </section>
+
+                <section>
+                    <p><strong>default.conf - v1.2</strong></p>
+                    <p><i><a href="https://goo.gl/rvtCMQ">goo.gl/rvtCMQ</a></i></p>
+                    <p style="padding-left:30%;text-align: left;font-size:1em;line-height:1em;">
+                        docker_skeleton/<br>
+                        │<br>
+                        ├ <b>docker-compose.yml</b><br>
+                        │<br>
+                        ├ docker/<br>
+                        ││<br>
+                        │└ nginx/<br>
+                        │ &nbsp;&nbsp;&nbsp;│<br>
+                        │ &nbsp;&nbsp;&nbsp;└ <b>default.conf</b><br>
+                        │<br>
+                        └ symfony/<br>
+                    </p>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v1.2</strong></p>
+                    <p><i><a href="https://goo.gl/rvtCMQ">goo.gl/rvtCMQ</a></i></p>
+                    <pre><code data-trim contenteditable>
+...
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v2.0</strong></p>
+                    <p><i><a href="https://goo.gl/t8CJ8t">goo.gl/t8CJ8t</a></i></p>
+                    <pre><code data-trim contenteditable>
+...
+    mysql:
+        container_name: sf_mysql
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: symfony
+            MYSQL_USER: symfony
+            MYSQL_PASSWORD: symfony
+        ports:
+            - "3306:3306"
+					</code></pre>
+                </section>
+
+                <section>
+                    <p><strong>symfony/src/AppBundle/Entity/Post.php - v2.0</strong></p>
+                    <p><i><a href="https://goo.gl/Y9Cauv">goo.gl/Y9Cauv</a></i></p>
+                    <pre><code data-trim contenteditable>
+# symfony/app/config/parameters.yml
+parameters:
+    database_host: mysql
+    database_port: null
+    database_name: symfony
+    database_user: symfony
+    database_password: symfony
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v2.1</strong></p>
+                    <p><i><a href="https://goo.gl/dQgYjL">goo.gl/dQgYjL</a></i></p>
+                    <pre><code data-trim contenteditable>
+services:
+    php:
+        container_name: sf_php
+        image: php:7.1-fpm
+        volumes:
+            - ./symfony:/var/www/symfony
+        links:
+            - mysql
+...
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                    <p>and</p>
+                    <p style="font-size: 1em;"><code>docker exec -it sf_php bash</code></p>
+                </section>
+
+                <section>
+                    <p><strong>Dockerfile - v2.2</strong></p>
+                    <p><i><a href="https://goo.gl/hhFTHn">goo.gl/hhFTHn</a></i></p>
+                    <p style="padding-left:30%;text-align: left;font-size:1em;line-height:1em;">
+                        docker_skeleton/<br>
+                        │<br>
+                        ├ <b>docker-compose.yml</b><br>
+                        │<br>
+                        └ docker/<br>
+                        &nbsp; │<br>
+                        &nbsp; ├ nginx/<br>
+                        &nbsp; │<br>
+                        &nbsp; └ php/<br>
+                        &nbsp;&nbsp;&nbsp; │<br>
+                        &nbsp;&nbsp;&nbsp; └ <b>Dockerfile</b><br>
+                    </p>
+                </section>
+
+                <section>
+                    <p><strong>docker/php/Dockerfile - v2.2</strong></p>
+                    <p><i><a href="https://goo.gl/hhFTHn">goo.gl/hhFTHn</a></i></p>
+                    <pre><code data-trim contenteditable>
+FROM php:7.1-fpm
+
+RUN apt-get update
+
+RUN docker-php-ext-install pdo pdo_mysql
+
+WORKDIR /var/www/symfony
+					</code></pre>
+                </section>
+
+                <section>
+                    <p><strong>docker-compose.yml - v2.2</strong></p>
+                    <p><i><a href="https://goo.gl/hhFTHn">goo.gl/hhFTHn</a></i></p>
+                    <pre><code data-trim contenteditable>
+services:
+    php:
+        container_name: sf_php
+        build: ./docker/php
+        volumes:
+            - ./symfony:/var/www/symfony
+        links:
+            - mysql
+...
+					</code></pre>
+                </section>
+
+                <section>
+                    <p style="font-size: 2em;"><code>docker-compose up</code></p>
+                    <p>and</p>
+                    <p style="font-size: 1em;"><code>docker exec -it sf_php bin/console d:s:c</code></p>
+                </section>
+
+                <section>
+                    <h3>Refactoring time!</h3>
+                    <p><img src="images/refactoring.jpg" /></p>
+                </section>
+
+			</div>
+
+		</div>
+
+		<script src="js/pgs.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+    			mouseWheel: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'js/plugin/zoom-js/zoom.js', async: true },
+					{ src: 'js/plugin/notes/notes.js', async: true }
+				]
+			});
+
+			// Callbacks
+			Reveal.addEventListener('ready', function( event ) {
+				// Adding PGS "squares" and counter
+				$(".slide-background").append('<div class="squares"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div><div class="counter"><span class="c-h"></span>.<span class="c-v"></span></div>');
+				// Counter inceremnts
+				$('.c-h').text(Reveal.getIndices().h+1);
+				$('.c-v').text(Reveal.getIndices().v);
+			});
+
+			Reveal.addEventListener('slidechanged', function( event ) {
+				// Counter inceremnts
+				$('.c-h').text(Reveal.getIndices().h+1);
+				$('.c-v').text(Reveal.getIndices().v);
+			} );
+
+		</script>
+
+	</body>
+</html>
